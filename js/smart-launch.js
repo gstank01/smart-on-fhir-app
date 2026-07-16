@@ -49,11 +49,11 @@ function handleLaunchPhase(fhirServerUrl, launchToken) {
 
     // 1. Construct parameters using our scalable config script file definitions
     const params = {
-        response_type: "code",
-        client_id: SMART_CONFIG.CLIENT_ID,
-        redirect_uri: SMART_CONFIG.REDIRECT_URI,
-        launch: launchToken,
         scope: SMART_CONFIG.SCOPES,
+        response_type: "code",
+        redirect_uri: SMART_CONFIG.REDIRECT_URI,
+        client_id: SMART_CONFIG.CLIENT_ID,
+        launch: launchToken,
         state: secureState,
         aud: fhirServerUrl
     };
