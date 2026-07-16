@@ -5,11 +5,8 @@ if (typeof SMART_CONFIG === "undefined") {
     window.SMART_CONFIG = {
         CLIENT_ID: "ef3b2af6-c1b8-4421-9dda-108c6ac8afce",
         
-        // FIXED: Safe, self-correcting URL parser that perfectly preserves GitHub subfolders
-        get REDIRECT_URI() { 
-            const currentUrl = new URL(window.location.href);
-            return `${currentUrl.origin}${currentUrl.pathname.replace('launch.html', 'index.html')}`;
-        },
+        // FIXED: Hardcoded string safely duplicated here to prevent mismatch bugs
+        REDIRECT_URI: "gstank01.github.io/smart-on-fhir-app/index.html", 
         
         ENDPOINTS: {
             EPIC_AUTHORIZE: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/authorize",
