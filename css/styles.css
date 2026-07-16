@@ -70,3 +70,72 @@ h4 {
     border-left: 4px solid #e74c3c; 
     color: #c0392b; 
 }
+
+/* css/styles.css (Append to the bottom) */
+.inspection-card {
+    padding: 20px; 
+    background: #ebf7ee; 
+    border: 1px solid #c3e6cb; 
+    border-radius: 4px; 
+    text-align: left;
+}
+
+.inspection-card h4 {
+    color: #155724; 
+    margin-top: 0; 
+    margin-bottom: 12px;
+}
+
+.inspect-label {
+    margin: 12px 0 2px 0; 
+    font-size: 12px; 
+    color: #555; 
+    font-weight: bold;
+}
+
+.inspect-label:first-of-type {
+    margin-top: 5px;
+}
+
+.inspect-code {
+    display: block; 
+    background: #fff; 
+    padding: 6px; 
+    border: 1px solid #ddd; 
+    word-break: break-all; 
+    font-size: 14px;
+}
+
+.inspect-code.url { color: #333; }
+.inspect-code.iss { color: #2980b9; }
+
+.inspect-scroll-box {
+    max-height: 100px; 
+    overflow-y: auto; 
+    background: #fff; 
+    padding: 6px; 
+    border: 1px solid #ddd; 
+    font-family: monospace; 
+    font-size: 14px; 
+    color: #c0392b; 
+    word-break: break-all; 
+    white-space: pre-wrap;
+}
+
+.proceed-btn {
+    background: #27ae60; 
+    color: #fff; 
+    border: none; 
+    padding: 12px 20px; 
+    font-size: 15px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    width: 100%;
+    margin-top: 15px;
+}
+
+.proceed-btn:hover {
+    background: #219653;
+}
+
