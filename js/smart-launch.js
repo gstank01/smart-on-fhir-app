@@ -4,7 +4,13 @@
 if (typeof SMART_CONFIG === "undefined") {
     window.SMART_CONFIG = {
         CLIENT_ID: "ef3b2af6-c1b8-4421-9dda-108c6ac8afce",
-        get REDIRECT_URI() { return `${window.location.origin}${window.location.pathname.replace('launch.html', 'index.html')}`; },
+        
+        // FIXED: Safe, self-correcting URL parser that perfectly preserves GitHub subfolders
+        get REDIRECT_URI() { 
+            const currentUrl = new URL(window.location.href);
+            return `${currentUrl.origin}${currentUrl.pathname.replace('launch.html', 'index.html')}`;
+        },
+        
         ENDPOINTS: {
             EPIC_AUTHORIZE: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/authorize",
             EPIC_TOKEN: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/token"
