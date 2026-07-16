@@ -33,7 +33,7 @@ async function executeSmartLaunch() {
                 <code class="inspect-code url">${window.location.href}</code>
                 <p class="inspect-label">2. Extracted FHIR Endpoint (iss):</p>
                 <code class="inspect-code iss">${fhirServerUrl}</code>
-                <p class="inspect-label">3. Extracted Session Token (launch):</p>
+                <p class="inspect-label">3.1 Extracted Session Token (launch):</p>
                 <div class="inspect-scroll-box">${launchToken}</div>
                 <button id="proceed-to-inspect-btn" class="proceed-btn">All looks good → Proceed to Request Preview</button>
             </div>
