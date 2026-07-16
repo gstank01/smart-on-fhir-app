@@ -6,7 +6,7 @@ if (typeof SMART_CONFIG === "undefined") {
         CLIENT_ID: "ef3b2af6-c1b8-4421-9dda-108c6ac8afce",
         
         // FIXED: Hardcoded string safely duplicated here to prevent mismatch bugs
-        REDIRECT_URI: "gstank01.github.io/smart-on-fhir-app/index.html", 
+        REDIRECT_URI: "gstank01.github.io/smart-on-fhir-app/launch.html", 
         
         ENDPOINTS: {
             EPIC_AUTHORIZE: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/authorize",
