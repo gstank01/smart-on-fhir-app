@@ -3,7 +3,7 @@ const SMART_CONFIG = {
     CLIENT_ID: "ef3b2af6-c1b8-4421-9dda-108c6ac8afce",
     
     // Dynamically builds the redirect URL based on where the app is hosted
-    REDIRECT_URI="gstank01.github.io/smart-on-fhir-app/index.html",
+    REDIRECT_URI="https://gstank01.github.io/smart-on-fhir-app/index.html",
     
     ENDPOINTS: {
         EPIC_AUTHORIZE: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/authorize", //This is the endpoint where we send the launch token to exchange it for authorization code  from step 2 on the Epic diagram
