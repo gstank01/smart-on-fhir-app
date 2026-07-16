@@ -287,5 +287,79 @@ h4 {
     border: 1px solid #ccc;
 }
 
+/* css/styles.css (Append to the bottom) */
+.fhir-inspect-card {
+    padding: 20px; 
+    background: #fff3cd; 
+    border: 1px solid #ffeeba; 
+    border-radius: 4px; 
+    text-align: left; 
+    color: #856404;
+}
+
+.fhir-inspect-card h4 {
+    color: #533f03; 
+    margin-top: 0; 
+    margin-bottom: 10px;
+}
+
+.fhir-desc {
+    font-size: 14px; 
+    color: #66521a; 
+    margin-bottom: 8px;
+}
+
+.fhir-label {
+    margin: 12px 0 2px 0; 
+    font-size: 14px; 
+    color: #555; 
+    font-weight: bold;
+}
+
+.token-red-box {
+    max-height: 80px; 
+    overflow-y: auto; 
+    background: #fff; 
+    padding: 6px; 
+    border: 1px solid #ddd; 
+    font-family: monospace; 
+    font-size: 14px; 
+    color: #7f1d1d; 
+    word-break: break-all; 
+    white-space: pre-wrap;
+}
+
+.execute-btn {
+    background: #e67e22; 
+    color: #fff; 
+    border: none; 
+    padding: 12px 20px; 
+    font-size: 15px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    width: 100%;
+    margin-top: 15px;
+}
+
+.execute-btn:hover {
+    background: #d35400;
+}
+
+/* Replaces your explicit style attributes inside the appointment map loop */
+.appointment-list-node {
+    padding: 10px; 
+    margin-bottom: 10px; 
+    background: #fff; 
+    border: 1px solid #ddd; 
+    border-radius: 4px; 
+    font-size: 13px; 
+    text-align: left; 
+    color: #333;
+}
+
+.val-time { color: #2c3e50; }
+.val-status { color: #27ae60; font-weight: bold; }
+.val-location { color: #2980b9; }
 
 
