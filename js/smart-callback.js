@@ -1,8 +1,6 @@
 // js/smart-callback.js
 
-// ==========================================
 // 1. MAIN INITIALIZATION LAYER
-// ==========================================
 
 async function executeTokenExchange() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -13,7 +11,7 @@ async function executeTokenExchange() {
     const state = urlParams.get("state");
     const expectedState = sessionStorage.getItem("expectedState");
     
-    // КОРЕКЦИЯ: Fixed fallback path to point to the actual FHIR engine gateway instead of epic.com
+    // Fixed fallback path to point to the actual FHIR engine gateway instead of epic.com
     const fhirServerUrl = sessionStorage.getItem("fhirServerUrl") || 
         "https://epic.com";
 
@@ -32,10 +30,8 @@ async function executeTokenExchange() {
 }
 
 
-// ==========================================
-// 2. SECURITY & UTILITY COMPILERS
-// ==========================================
 
+// 2. SECURITY & UTILITY COMPILERS
 function validateSecurityState(state, expectedState, statusDiv) {
     if (state && state === expectedState) return true;
     
@@ -82,10 +78,7 @@ function generateFhirHttpPreview(patientId, accessToken) {
     return rawText;
 }
 
-
-// ==========================================
 // 3. ASYNCHRONOUS DATA TRANSFERS (API FETCH)
-// ==========================================
 
 function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
     document.getElementById("redeem-token-btn").addEventListener("click", async function () {
@@ -180,9 +173,7 @@ function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
     });
 }
 
-// ==========================================
 // 4. UI INTERFACE INJECTION LAYER (TEMPLATES)
-// ==========================================
 
 function renderAuthorizationCodeCard(statusDiv, code, rawPostHttpText) {
     statusDiv.className = ""; 
