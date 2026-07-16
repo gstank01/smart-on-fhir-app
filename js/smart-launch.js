@@ -7,7 +7,7 @@ if (typeof SMART_CONFIG === "undefined") {
         get REDIRECT_URI() { return `${window.location.origin}${window.location.pathname.replace('launch.html', 'index.html')}`; },
         ENDPOINTS: {
             EPIC_AUTHORIZE: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/authorize",
-            EPIC_TOKEN: "https://epic.com"
+            EPIC_TOKEN: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/token"
         },
         SCOPES: "launch openid fhirUser"
     };
@@ -61,10 +61,10 @@ function handleLaunchPhase(fhirServerUrl, launchToken) {
 
     // 1. Construct the precise payload matching your working POST schema
     const params = {
-        scope: "launch openid fhirUser", // Scopes configured per your environment configuration
+        scope: SMART_CONFIG.SCOPES, // Scopes configured per your environment configuration
         response_type: "code",
-        redirect_uri: REDIRECT_URI, // Character-for-character registered callback string
-        client_id: CLIENT_ID,
+        redirect_uri: SMART_CONFIG.REDIRECT_URI, // Character-for-character registered callback string
+        client_id: SMART_CONFIG.CLIENT_ID,
         launch: launchToken, // Stored launch token
         state: secureState, // Unique transaction key generated above
         aud: fhirServerUrl // The base URL of the resource server we intend to query
