@@ -61,14 +61,14 @@ function handleLaunchPhase(fhirServerUrl, launchToken) {
 
     // 1. Construct the precise payload matching your working POST schema
     const params = {
-        scope: SMART_CONFIG.SCOPES,
+        scope: "launch openid fhirUser", // Scopes configured per your environment configuration
         response_type: "code",
-        redirect_uri: SMART_CONFIG.REDIRECT_URI,
-        client_id: SMART_CONFIG.CLIENT_ID,
-        launch: launchToken,
-        state: secureState,
-        aud: fhirServerUrl
-    };
+        redirect_uri: REDIRECT_URI, // Character-for-character registered callback string
+        client_id: CLIENT_ID,
+        launch: launchToken, // Stored launch token
+        state: secureState, // Unique transaction key generated above
+        aud: fhirServerUrl // The base URL of the resource server we intend to query
+      };
 
     const formUrlEncodedBody = new URLSearchParams(params).toString();
 
