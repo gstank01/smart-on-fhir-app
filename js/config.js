@@ -12,5 +12,5 @@ const SMART_CONFIG = {
         EPIC_TOKEN: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/token" //this is the endpint where we are seinfing the auth code to be exchanged for access token from step 5 on the Epic diagram
     },
     
-    SCOPES: "launch openid fhirUser patient/Patient.read" // Add additional FHIR resource scopes here
+    SCOPES: "launch openid fhirUser " // Add additional FHIR resource scopes here
 };
