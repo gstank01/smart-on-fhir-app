@@ -189,4 +189,103 @@ h4 {
     background: #004273;
 }
 
+/* css/styles.css (Append to the bottom) */
+.token-capture-card {
+    padding: 20px; 
+    background: #e3f2fd; 
+    border: 1px solid #90caf9; 
+    border-radius: 4px; 
+    text-align: left;
+}
+
+.token-capture-card h4 {
+    color: #0d47a1; 
+    margin-top: 0; 
+    margin-bottom: 10px;
+}
+
+.token-desc {
+    font-size: 14px; 
+    color: #555; 
+    margin-bottom: 8px;
+}
+
+.token-label {
+    margin: 12px 0 2px 0; 
+    font-size: 12px; 
+    color: #555; 
+    font-weight: bold;
+}
+
+.token-label:first-of-type {
+    margin-top: 5px;
+}
+
+.token-scroll-box {
+    max-height: 80px; 
+    overflow-y: auto; 
+    background: #fff; 
+    padding: 6px; 
+    border: 1px solid #ddd; 
+    font-family: monospace; 
+    font-size: 14px; 
+    color: #1b5e20; 
+    word-break: break-all; 
+    white-space: pre-wrap;
+}
+
+.token-textarea {
+    width: 100%; 
+    height: 130px; 
+    font-family: monospace; 
+    font-size: 14px; 
+    background: #2c3e50; 
+    color: #ecf0f1; 
+    padding: 8px; 
+    border-radius: 4px; 
+    border: none; 
+    box-sizing: border-box; 
+    resize: vertical; 
+    white-space: pre-wrap; 
+    word-break: break-all;
+}
+
+.redeem-btn {
+    background: #0d47a1; 
+    color: #fff; 
+    border: none; 
+    padding: 12px 20px; 
+    font-size: 15px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    width: 100%;
+    margin-top: 15px;
+}
+
+.redeem-btn:hover {
+    background: #0a3982;
+}
+
+.token-success-status {
+    padding: 15px; 
+    background: #ebf7ee; 
+    border: 1px solid #c3e6cb; 
+    border-radius: 4px; 
+    text-align: left; 
+    color: #155724;
+}
+
+.error-details-box {
+    width: 100%; 
+    height: 90px; 
+    font-family: monospace; 
+    font-size: 11px; 
+    background: #fff; 
+    padding: 5px; 
+    box-sizing: border-box; 
+    border: 1px solid #ccc;
+}
+
+
 
