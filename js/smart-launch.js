@@ -104,12 +104,26 @@ function handleLaunchPhase(fhirServerUrl, launchToken) {
     }
     document.body.appendChild(nativeForm);
 
-    // 5. Fire form submission on button confirmation click
+        // 5. Fire form submission on button confirmation click
     document.getElementById("submit-to-epic-btn").addEventListener("click", function (event) {
-        event.preventDefault();
+        event.preventDefault(); // Halt transmission loop temporarily for logging
+
+        // EXTRCTION 1: Log the raw HTML element block structure directly
+        console.log("--- RAW HTML FORM ELEMENT ---");
+        console.log(nativeForm); 
+
+        // EXTRACTION 2: Extract and view it as a neat, interactive key-value JSON object
+        console.log("--- FORM PAYLOAD DATA OBJECT ---");
+        const formData = new FormData(nativeForm); // Reads all input name/value pairs
+        const plainPayloadObject = Object.fromEntries(formData); // Flattens it
+        console.table(plainPayloadObject); // Prints a beautiful debugging matrix grid
+
         document.getElementById("status").innerText = "Transmitting POST request payload natively via browser context...";
-        nativeForm.submit();
+        
+        // Execute the real transmission out to Epic
+        nativeForm.submit(); 
     });
+
 }
 
 document.addEventListener("DOMContentLoaded", executeSmartLaunch);
