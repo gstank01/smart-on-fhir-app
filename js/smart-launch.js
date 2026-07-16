@@ -5,13 +5,11 @@ async function executeSmartLaunch() {
 
     if (!statusDiv) return;
 
-    // Detect initial launch sequence & inspect variables
     if (urlParams.has("iss") && urlParams.has("launch")) {
         const fhirServerUrl = urlParams.get("iss");
         const launchToken = urlParams.get("launch");
 
-        // Render the clean layout using CSS classes instead of inline styles
-        statusDiv.className = ""; // Remove the .loading class wrapper
+        statusDiv.className = ""; // Reset fallback loader formatting
         statusDiv.innerHTML = `
             <div class="inspection-card">
                 <h4>Step 1: Launch Parameters Caught Successfully!</h4>
@@ -26,18 +24,15 @@ async function executeSmartLaunch() {
                 <div class="inspect-scroll-box">${launchToken}</div>
                 
                 <button id="proceed-to-inspect-btn" class="proceed-btn">
-                    All looks good → Exchange the launch token for authorization code
+                    All looks good → Proceed to Request Preview
                 </button>
             </div>
         `;
 
-        // Bind event listener to proceed with the redirect to Epic's login screen
         document.getElementById("proceed-to-inspect-btn").addEventListener("click", function () {
             handleLaunchPhase(fhirServerUrl, launchToken);
         });
-    } 
-    // If someone visits launch.html manually without the Epic Simulator
-    else {
+    } else {
         statusDiv.className = "error-message";
         statusDiv.innerHTML = `
             <strong>Error: Missing launch parameters in URL.</strong><br>
@@ -47,15 +42,13 @@ async function executeSmartLaunch() {
 }
 
 function handleLaunchPhase(fhirServerUrl, launchToken) {
-    // Preserve transaction parameters across the redirect hop in local session variables
     sessionStorage.setItem("fhirServerUrl", fhirServerUrl);
 
-    // Generate secure state session tracker (Epic recommendation: UUID for entropy)
     const secureState = crypto.randomUUID();
     sessionStorage.setItem("expectedState", secureState);
 
-    // Construct the parameters using our unified global config asset file
-    const authorizeParams = new URLSearchParams({
+    // 1. Construct parameters using our scalable config script file definitions
+    const params = {
         response_type: "code",
         client_id: SMART_CONFIG.CLIENT_ID,
         redirect_uri: SMART_CONFIG.REDIRECT_URI,
@@ -63,11 +56,39 @@ function handleLaunchPhase(fhirServerUrl, launchToken) {
         scope: SMART_CONFIG.SCOPES,
         state: secureState,
         aud: fhirServerUrl
-    });
+    };
 
-    // Execute hand-off to Epic identity server
-    window.location.href = `${SMART_CONFIG.ENDPOINTS.EPIC_AUTHORIZE}?${authorizeParams.toString()}`;
+    const urlEncodedQueryString = new URLSearchParams(params).toString();
+
+    // 2. Assemble clean, descriptive raw HTTP payload tracking inside the console box
+    // Correcting documentation modeling to GET to respect OAuth2 framework compliance specs
+    let rawHttpText = `GET ${SMART_CONFIG.ENDPOINTS.EPIC_AUTHORIZE}?${urlEncodedQueryString} HTTP/1.1\n`;
+    rawHttpText += `Host: vendorservices.epic.com\n`;
+    rawHttpText += `Accept: text/html,application/xhtml+xml\n`;
+    rawHttpText += `Connection: keep-alive`;
+
+    // 3. Render the structural dark inspection preview pane via modern CSS classes
+    document.getElementById("status").innerHTML = `
+        <h4 class="preview-title">Raw HTTP Request Preview:</h4>
+        <p class="preview-desc">Review the protocol handshake sequence package sent to Epic</p>
+        <textarea readonly class="raw-http-box">${rawHttpText}</textarea>
+        
+        <p class="success-note">Form parameters compiled and URL-encoded successfully.</p>
+        <button id="submit-to-epic-btn" class="epic-submit-btn">
+            Send Request to Epic Authorization Server →
+        </button>
+    `;
+
+    // 4. Trigger target-top location rewrite handler instead of compiling raw hidden POST nodes
+    document.getElementById("submit-to-epic-btn").addEventListener("click", function (event) {
+        event.preventDefault();
+
+        document.getElementById("status").innerText = 
+            "Transmitting secure URL parameters natively via top browser frame context...";
+
+        // Executes native GET redirect, breaking out of framing restrictions gracefully
+        window.top.location.href = `${SMART_CONFIG.ENDPOINTS.EPIC_AUTHORIZE}?${urlEncodedQueryString}`;
+    });
 }
 
-// Automatically fire when the hosting DOM finishes loading
 document.addEventListener("DOMContentLoaded", executeSmartLaunch);
