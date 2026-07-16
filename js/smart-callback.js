@@ -1,4 +1,4 @@
-// js/smart-callback.js to capture the authentication landing payload, run secure checks, and extracts the payload context
+// js/smart-callback.js
 async function executeTokenExchange() {
     const urlParams = new URLSearchParams(window.location.search);
     const statusDiv = document.getElementById("status");
@@ -6,13 +6,14 @@ async function executeTokenExchange() {
     const code = urlParams.get("code");
     const state = urlParams.get("state");
     const expectedState = sessionStorage.getItem("expectedState");
+    const fhirServerUrl = sessionStorage.getItem("fhirServerUrl");
 
     if (!state || state !== expectedState) {
-        if (statusDiv) statusDiv.innerHTML = "<b style='color:red;'>Security Error:</b> State mismatch or session expired.";
+        if (statusDiv) statusDiv.innerHTML = "<div class='error-message'><b>Security Error:</b> State mismatch or session expired.</div>";
         return;
     }
 
-    if (statusDiv) statusDiv.innerHTML = "Swapping authorization code for access token...";
+    if (statusDiv) statusDiv.innerHTML = "Exchanging authorization code for Epic access token...";
 
     const tokenPayload = new URLSearchParams({
         grant_type: "authorization_code",
@@ -28,29 +29,94 @@ async function executeTokenExchange() {
             body: tokenPayload.toString()
         });
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) throw new Error(`Token exchange failed: ${response.status}`);
         
         const tokenData = await response.json();
         
-        // Broadcast data to your dashboard layout UI frame
-        renderDashboardUI(tokenData);
+        // Pass server routing targets forward to pull downstream resources
+        await fetchFhirData(fhirServerUrl, tokenData.access_token, tokenData.patient);
         
     } catch (error) {
-        if (statusDiv) statusDiv.innerHTML = `<b style='color:red;'>Token Exchange Failed:</b> ${error.message}`;
+        if (statusDiv) statusDiv.innerHTML = `<div class='error-message'><b>Error:</b> ${error.message}</div>`;
     }
 }
 
-function renderDashboardUI(tokenData) {
+async function fetchFhirData(fhirServerUrl, accessToken, patientId) {
     const statusDiv = document.getElementById("status");
-    if (!statusDiv) return;
+    if (statusDiv) statusDiv.innerHTML = "Fetching clinical resources from Epic...";
+
+    const headers = {
+        "Authorization": `Bearer ${accessToken}`,
+        "Accept": "application/fhir+json"
+    };
+
+    try {
+        // 1. Fetch Demographics (Patient Resource)
+        const patientResponse = await fetch(`${fhirServerUrl}/Patient/${patientId}`, { headers });
+        if (!patientResponse.ok) throw new Error("Failed to fetch patient demographics.");
+        const patientData = await patientResponse.json();
+
+        // 2. Fetch Booked Windows (Appointment Resource)
+        const appointmentResponse = await fetch(`${fhirServerUrl}/Appointment?patient=${patientId}`, { headers });
+        if (!appointmentResponse.ok) throw new Error("Failed to fetch patient appointments.");
+        const appointmentData = await appointmentResponse.json();
+
+        // Pass structured data sets to UI renderer
+        renderDashboardUI(patientData, appointmentData);
+
+    } catch (error) {
+        if (statusDiv) statusDiv.innerHTML = `<div class='error-message'><b>FHIR Fetch Error:</b> ${error.message}</div>`;
+    }
+}
+
+// UPDATED VIEW FUNCTION FOR CLEAN OUTBOUND CSS TRACKING
+function renderDashboardUI(patient, appointmentBundle) {
+    const statusDiv = document.getElementById("status");
+    const demographicsView = document.getElementById("demographics-view");
+    const appointmentsList = document.getElementById("appointments-list");
+
+    // Hide global loader context container
+    if (statusDiv) statusDiv.style.display = "none";
     
-    statusDiv.innerHTML = `
-        <div style="background:#ebf7ee; padding:20px; border:1px solid #c3e6cb; border-radius:4px;">
-            <h3 style="color:#155724; margin-top:0;">Connected to Epic Sandbox Successfully!</h3>
-            <p><b>Active Patient Context Context ID:</b> <code>${tokenData.patient}</code></p>
-            <p style="font-size:12px; color:#555;">Token authorized. Ready to run FHIR REST queries against baseline resources.</p>
-        </div>
-    `;
+    // Safely parse human name fields out of complex FHIR array structures
+    const nameData = (patient.name && patient.name.length > 0) ? patient.name[0] : {};
+    const givenName = nameData.given ? nameData.given.join(" ") : "";
+    const familyName = nameData.family || "";
+    
+    document.getElementById("pt-name").innerText = `${givenName} ${familyName}`.trim() || "Unknown Patient";
+    document.getElementById("pt-dob").innerText = patient.birthDate || "N/A";
+    document.getElementById("pt-gender").innerText = patient.gender || "N/A";
+
+    // Unhide the clean demographics top banner view panel
+    if (demographicsView) demographicsView.style.display = "block";
+
+    // Clean loop arrays to process and generate individual encounter nodes
+    if (appointmentsList) {
+        appointmentsList.innerHTML = ""; 
+
+        if (!appointmentBundle.entry || appointmentBundle.entry.length === 0) {
+            appointmentsList.innerHTML = "<p style='color:#777; font-style:italic;'>No upcoming appointments found for this patient.</p>";
+            return;
+        }
+
+        appointmentBundle.entry.forEach(item => {
+            const appt = item.resource;
+            const apptTime = appt.start ? new Date(appt.start).toLocaleString() : "Date/Time TBD";
+            const apptType = appt.appointmentType?.text || appt.description || "Clinical Visit";
+            const apptStatus = appt.status || "booked";
+
+            const card = document.createElement("div");
+            card.className = "appointment-card";
+            
+            // Replaced all inline style elements with clean CSS classes matching your stylesheet
+            card.innerHTML = `
+                <strong>${apptType}</strong><br>
+                <span class="appointment-time">📅 ${apptTime}</span><br>
+                <span class="appointment-status">Status: ${apptStatus}</span>
+            `;
+            appointmentsList.appendChild(card);
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", executeTokenExchange);
