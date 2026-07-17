@@ -1,5 +1,6 @@
 // js/smart-launch.js
 
+/*
 // Global Fail-Safe block
 if (typeof SMART_CONFIG === "undefined") {
     window.SMART_CONFIG = {
@@ -15,6 +16,8 @@ if (typeof SMART_CONFIG === "undefined") {
         SCOPES: "launch openid fhirUser"
     };
 }
+
+*/
 
 async function executeSmartLaunch() {
     const urlParams = new URLSearchParams(window.location.search);
