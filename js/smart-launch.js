@@ -1,27 +1,12 @@
 // js/smart-launch.js
 
-/*
-// Global Fail-Safe block
-if (typeof SMART_CONFIG === "undefined") {
-    window.SMART_CONFIG = {
-        CLIENT_ID: "ef3b2af6-c1b8-4421-9dda-108c6ac8afce",
-        
-        // FIXED: Hardcoded string safely duplicated here to prevent mismatch bugs
-        REDIRECT_URI: "https://gstank01.github.io/smart-on-fhir-app/index.html", 
-        
-        ENDPOINTS: {
-            EPIC_AUTHORIZE: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/authorize",
-            EPIC_TOKEN: "https://vendorservices.epic.com/interconnect-amcurprd-oauth/oauth2/token"
-        },
-        SCOPES: "launch openid fhirUser"
-    };
-}
-
-*/
-
 async function executeSmartLaunch() {
+    
+    //extract query parameters from the browser's address bar and ensure a specific HTML element exists before running further code.
+    //window.location.search grabs the query string from the URL (everything starting from the ?)
+    //URLSearchParams converts the string into an easy-to-use object. This allows to quickly fetch specific values later
     const urlParams = new URLSearchParams(window.location.search);
-    const statusDiv = document.getElementById("status");
+    const statusDiv = document.getElementById("status"); //
     if (!statusDiv) return;
 
     if (urlParams.has("iss") && urlParams.has("launch")) {
