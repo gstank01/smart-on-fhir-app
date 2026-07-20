@@ -44,31 +44,35 @@ async function executeSmartLaunch() {
     }
 }
 
-function handleLaunchPhase(fhirServerUrl, launchToken) {
-    sessionStorage.setItem("fhirServerUrl", fhirServerUrl);
+//This function handles tha launch phase
+
+function handleLaunchPhase(fhirServerUrl, launchToken) { //pass the fhir server url and launch token from the launch function as parametres
+    sessionStorage.setItem("fhirServerUrl", fhirServerUrl); //temporarily store the value of that variable inside the browser's memory, linked to a specific label
 
     // Secure state generation with math random fallback for local testing frames
+    // https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID
     let secureState = (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") 
         ? crypto.randomUUID() 
-        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { //https://stackoverflow.com/questions/49485073/detailed-explanation-for-this-function-needed
             const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
           });
     sessionStorage.setItem("expectedState", secureState);
 
-    // 1. Construct the precise payload matching your working POST schema
+    // 1. Construct the precise payload matching the working POST schema
     const params = {
-        scope: SMART_CONFIG.SCOPES, // Scopes configured per your environment configuration
+        scope: SMART_CONFIG.SCOPES, // Scopes configured at config.js
         response_type: "code",
         redirect_uri: SMART_CONFIG.REDIRECT_URI, // Character-for-character registered callback string
-        client_id: SMART_CONFIG.CLIENT_ID,
+        client_id: SMART_CONFIG.CLIENT_ID, //the client ID registered with the Vendor Services website and defined in config.js
         launch: launchToken, // Stored launch token
         state: secureState, // Unique transaction key generated above
         aud: fhirServerUrl // The base URL of the resource server we intend to query
       };
 
+    //format the parametres into a string to be sent cleanly to the server over the internet
     const formUrlEncodedBody = new URLSearchParams(params).toString();
 
-    // 2. Assemble accurate absolute raw HTTP POST preview string
+    // 2. Assemble accurate  raw HTTP POST preview string
     let rawHttpText = `POST ${SMART_CONFIG.ENDPOINTS.EPIC_AUTHORIZE} HTTP/1.1\n`;
     rawHttpText += `Host: vendorservices.epic.com\n`;
     rawHttpText += `Content-Type: application/x-www-form-urlencoded\n`;
@@ -112,4 +116,5 @@ function handleLaunchPhase(fhirServerUrl, launchToken) {
 
 }
 
+//Wait for your webpage to finish loading its structure before automatically starting the SMART on FHIR login process
 document.addEventListener("DOMContentLoaded", executeSmartLaunch);
