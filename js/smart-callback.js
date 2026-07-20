@@ -67,7 +67,7 @@ function generatePostHttpPreview(tokenPayload) {
 function generateFhirHttpPreview(patientId, accessToken) {
     let rawText = `GET /Patient/${patientId} HTTP/1.1\n`;
     rawText += `GET /Appointment?patient=${patientId}&service-category=Appointment&_include=Appointment:location HTTP/1.1\n`;
-    rawText += `GET /Encounter?patient=${patientId} HTTP/1.1\n`;
+    rawText += `GET /Encounter?patient=${patientId}&_sort=-date&_count=10 HTTP/1.1\n`;
     
     // Dynamically parse the active host name, or default it to vendorservices to preserve environment matching
     const hostTarget = sessionStorage.getItem("fhirServerUrl") 
@@ -140,7 +140,7 @@ function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
 
         const targetPatientUrl = `${fhirServerUrl}/Patient/${patientId}`;
         const targetAppointmentUrl = `${fhirServerUrl}/Appointment?patient=${patientId}&_include=Appointment%3Alocation`;
-        const targetEncounterUrl = `${fhirServerUrl}/Encounter?patient=${patientId}`;
+        const targetEncounterUrl = `${fhirServerUrl}/Encounter?patient=${patientId}&_sort=-date&_count=10`;
 
         const headers = { 
             "Authorization": `Bearer ${accessToken}`, 
