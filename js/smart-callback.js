@@ -132,50 +132,64 @@ function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
 }
 
 function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
-    //add event lustener to trigger the fhir request 
     document.getElementById("execute-fhir-btn").addEventListener("click", async function () {
         this.disabled = true;
-        this.innerText = "Querying Patient Profile and Appointment slots simultaneously...";
+        this.innerText = "Querying Patient Profile, Appointments, and Encounters...";
         const statusDiv = document.getElementById("status");
 
-        //Streamlined URL string query structure to enforce safe sandbox mapping profiles
         const targetPatientUrl = `${fhirServerUrl}/Patient/${patientId}`;
         const targetAppointmentUrl = `${fhirServerUrl}/Appointment?patient=${patientId}&_include=Appointment%3Alocation`;
-        const targetEncounterUrl = `${fhirServerUrl}/Encounter?patient=${patientId}`; //added as an addition
+        const targetEncounterUrl = `${fhirServerUrl}/Encounter?patient=${patientId}`;
+
+        const headers = { 
+            "Authorization": `Bearer ${accessToken}`, 
+            "Accept": "application/fhir+json" 
+        };
 
         try {
-            const [patientResponse, appointmentResponse, encounterResponse] = await Promise.all([
-                fetch(targetPatientUrl, { 
-                    headers: { "Authorization": `Bearer ${accessToken}`, "Accept": "application/fhir+json" } 
-                }),
-                fetch(targetAppointmentUrl, { 
-                    headers: { "Authorization": `Bearer ${accessToken}`, "Accept": "application/fhir+json" } 
-                }),
-                fetch(targetEncounterUrl, { 
-                headers: { "Authorization": `Bearer ${accessToken}`, "Accept": "application/fhir+json" } 
-        })
+            // 1. Execute requests simultaneously, but handle individual errors immediately
+            const [patientData, appointmentData, encounterData] = await Promise.all([
+                
+                // Patient Request Failsafe
+                fetch(targetPatientUrl, { headers })
+                    .then(res => res.ok ? res.json() : Promise.reject(`HTTP ${res.status}`))
+                    .catch(err => {
+                        console.warn("Failsafe Triggered: Patient data unavailable.", err);
+                        return null; // Return null so the UI knows it failed
+                    }),
+
+                // Appointment Request Failsafe
+                fetch(targetAppointmentUrl, { headers })
+                    .then(res => res.ok ? res.json() : Promise.reject(`HTTP ${res.status}`))
+                    .catch(err => {
+                        console.warn("Failsafe Triggered: Appointment data unavailable.", err);
+                        return { resourceType: "Bundle", entry: [] }; // Return an empty bundle
+                    }),
+
+                // Encounter Request Failsafe
+                fetch(targetEncounterUrl, { headers })
+                    .then(res => res.ok ? res.json() : Promise.reject(`HTTP ${res.status}`))
+                    .catch(err => {
+                        console.warn("Failsafe Triggered: Encounter data unavailable (possible sync delay).", err);
+                        return { resourceType: "Bundle", entry: [], error: true }; // Flag the error
+                    })
             ]);
 
-            if (!patientResponse.ok || !appointmentResponse.ok || !encounterResponse.ok) {
-                throw new Error(`Data retrieval failed. Patient: HTTP ${patientResponse.status}, Appointment: HTTP ${appointmentResponse.status}`);
+            // 2. Critical Safety Check: The app cannot run at all without the core Patient identity
+            if (!patientData) {
+                throw new Error("Critical Failure: Core Patient data could not be retrieved.");
             }
 
-            const patientData = await patientResponse.json();
-            const appointmentData = await appointmentResponse.json();
-            const encounterData = await encounterResponse.json();
-            
-
-            // Populate dashboard presentation templates
+            // 3. Render the UI (The downstream render function will now receive safe fallback objects)
             renderDashboardUI(patientData, appointmentData, encounterData);
 
         } catch (error) {
-            // Restore functional state tracking button controls dynamically upon error drop-outs
             this.disabled = false;
             this.innerText = "Headers Verified → Execute FHIR Requests";
 
             statusDiv.className = "error-message";
             statusDiv.innerHTML = `
-                <strong>FHIR Data Request failed:</strong><br>
+                <strong>Critical FHIR Data Request failed:</strong><br>
                 <code style="display:block; background:#fff; padding:6px; border:1px solid #ddd; margin-top:5px; word-break:break-all; font-size:11px;">${error.message}</code>
             `;
         }
