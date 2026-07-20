@@ -1,4 +1,5 @@
 // js/smart-callback.js
+//handle the callback
 
 // 1. MAIN INITIALIZATION LAYER
 
