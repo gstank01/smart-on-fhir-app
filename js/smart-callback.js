@@ -1,9 +1,9 @@
 // js/smart-callback.js
 //handle the callback
 
-// 1. MAIN INITIALIZATION LAYER
+// 1. Main layer
 
-async function executeTokenExchange() {
+async function executeTokenExchange() { //Async function reference - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
     const urlParams = new URLSearchParams(window.location.search);
     const statusDiv = document.getElementById("status");
     if (!statusDiv) return;
@@ -14,7 +14,7 @@ async function executeTokenExchange() {
     
     // Fixed fallback path to point to the actual FHIR engine gateway instead of epic.com
     const fhirServerUrl = sessionStorage.getItem("fhirServerUrl") || 
-        "https://epic.com";
+        "https://epic.com"; //the default fallback address if sessionStorage returns nothing because the user ioened a fresh tab or didn't launch the app correctly  
 
     // Validate security state immediately (Anti-CSRF defense step)
     if (!validateSecurityState(state, expectedState, statusDiv)) return;
@@ -23,7 +23,7 @@ async function executeTokenExchange() {
     const tokenPayload = buildTokenPayload(code);
     const rawPostHttpText = generatePostHttpPreview(tokenPayload);
 
-    // Present Step 4 Authorization UI verification card
+    // Step 4 Authorization UI verification card
     renderAuthorizationCodeCard(statusDiv, code, rawPostHttpText);
 
     // Bind event submission handler to wait on your manual click trigger
@@ -32,7 +32,7 @@ async function executeTokenExchange() {
 
 
 
-// 2. SECURITY & UTILITY COMPILERS
+// 2. Security and utility
 function validateSecurityState(state, expectedState, statusDiv) {
     if (state && state === expectedState) return true;
     
@@ -68,7 +68,7 @@ function generateFhirHttpPreview(patientId, accessToken) {
     let rawText = `GET /Patient/${patientId} HTTP/1.1\n`;
     rawText += `GET /Appointment?patient=${patientId}&service-category=Appointment&_include=Appointment:location HTTP/1.1\n`;
     
-    // CORRECTION: Dynamically parse the active host name, or default it to vendorservices to preserve environment matching
+    // Dynamically parse the active host name, or default it to vendorservices to preserve environment matching
     const hostTarget = sessionStorage.getItem("fhirServerUrl") 
         ? new URL(sessionStorage.getItem("fhirServerUrl")).host 
         : "vendorservices.epic.com";
@@ -79,9 +79,10 @@ function generateFhirHttpPreview(patientId, accessToken) {
     return rawText;
 }
 
-// 3. ASYNCHRONOUS DATA TRANSFERS (API FETCH)
+// 3. Data transfer - API fetch
 
 function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
+    //set event listener to exchange the code  for access token
     document.getElementById("redeem-token-btn").addEventListener("click", async function () {
         this.disabled = true;
         this.innerText = "Exchanging code payload for Epic Access Token...";
@@ -102,11 +103,11 @@ function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(`HTTP ${response.status}: ${errorText || "Epic rejected our authorization code."}`);
+                throw new Error(`HTTP ${response.status}: ${errorText || "Epic rejected the authorization code."}`);
             }
 
             const tokenData = await response.json();
-            const patientId = tokenData.patient || tokenData.patient_id || "Tbt3C4AAu6TrvAGGgYw62nw3";
+            const patientId = tokenData.patient || tokenData.patient_id;
             const accessToken = tokenData.access_token;
 
             if (!accessToken) throw new Error("Handshake processed successfully, but 'access_token' returned empty.");
@@ -131,37 +132,44 @@ function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
 }
 
 function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
+    //add event lustener to trigger the fhir request 
     document.getElementById("execute-fhir-btn").addEventListener("click", async function () {
         this.disabled = true;
         this.innerText = "Querying Patient Profile and Appointment slots simultaneously...";
         const statusDiv = document.getElementById("status");
 
-        // CORRECTION: Streamlined URL string query structure to enforce safe sandbox mapping profiles
+        //Streamlined URL string query structure to enforce safe sandbox mapping profiles
         const targetPatientUrl = `${fhirServerUrl}/Patient/${patientId}`;
         const targetAppointmentUrl = `${fhirServerUrl}/Appointment?patient=${patientId}&_include=Appointment%3Alocation`;
+        const targetEncounterUrl = `${fhirServerUrl}/Encounter?patient=${patientId}`; //added as an addition
 
         try {
-            const [patientResponse, appointmentResponse] = await Promise.all([
+            const [patientResponse, appointmentResponse, encounterResponse] = await Promise.all([
                 fetch(targetPatientUrl, { 
                     headers: { "Authorization": `Bearer ${accessToken}`, "Accept": "application/fhir+json" } 
                 }),
                 fetch(targetAppointmentUrl, { 
                     headers: { "Authorization": `Bearer ${accessToken}`, "Accept": "application/fhir+json" } 
-                })
+                }),
+                fetch(targetEncounterUrl, { 
+                headers: { "Authorization": `Bearer ${accessToken}`, "Accept": "application/fhir+json" } 
+        })
             ]);
 
-            if (!patientResponse.ok || !appointmentResponse.ok) {
+            if (!patientResponse.ok || !appointmentResponse.ok || !encounterResponse.ok) {
                 throw new Error(`Data retrieval failed. Patient: HTTP ${patientResponse.status}, Appointment: HTTP ${appointmentResponse.status}`);
             }
 
             const patientData = await patientResponse.json();
-            const fhirBundle = await appointmentResponse.json();
+            const appointmentData = await appointmentResponse.json();
+            const encounterData = await encounterResponse.json();
+            
 
             // Populate dashboard presentation templates
-            renderDashboardUI(patientData, fhirBundle);
+            renderDashboardUI(patientData, appointmentData, encounterData);
 
         } catch (error) {
-            // FIX: Restore functional state tracking button controls dynamically upon error drop-outs
+            // Restore functional state tracking button controls dynamically upon error drop-outs
             this.disabled = false;
             this.innerText = "Headers Verified → Execute FHIR Requests";
 
@@ -174,7 +182,7 @@ function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
     });
 }
 
-// 4. UI INTERFACE INJECTION LAYER (TEMPLATES)
+// 4. Dashboard presentation templates
 
 function renderAuthorizationCodeCard(statusDiv, code, rawPostHttpText) {
     statusDiv.className = ""; 
@@ -207,11 +215,12 @@ function renderIntermediateFhirCard(statusDiv, fhirServerUrl, patientId, accessT
     bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken);
 }
 
-function renderDashboardUI(patientData, fhirBundle) {
+function renderDashboardUI(patientData, appointmentData, encounterData) {
     const statusDiv = document.getElementById("status");
     const demographicsView = document.getElementById("demographics-view");
     const appointmentsListDiv = document.getElementById("appointments-list");
-
+    const encountersListDiv = document.getElementById("encounters-list");
+    
     // Process and populate demographic fields safely
     const nameObj = (patientData.name && patientData.name.length > 0) ? patientData.name[0] : {};
     
@@ -260,6 +269,31 @@ function renderDashboardUI(patientData, fhirBundle) {
                 </div>
             `;
         }).join("");
+    }
+
+    if (encountersListDiv) {
+        const encounterEntries = encounterData.entry || [];
+        const encounters = encounterEntries.filter(e => e.resource?.resourceType === "Encounter").map(e => e.resource);
+
+        if (encounters.length === 0) {
+            encountersListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No recent encounters found.</p>`;
+        } else {
+            encountersListDiv.innerHTML = encounters.map((enc, idx) => {
+                // Extracts the date of the medical visit
+                const encounterDate = enc.period?.start ? new Date(enc.period.start).toLocaleDateString() : "N/A";
+                // Extracts the type/reason (e.g., "Outpatient", "Follow-up")
+                const encounterType = enc.type?.[0]?.text || enc.class?.display || "General Visit";
+                const encounterStatus = enc.status || "N/A";
+
+                return `
+                    <div class="encounter-list-node" style="border-left: 4px solid #0076d6; padding: 10px; margin-bottom: 10px; background: #f9f9f9;">
+                        <strong>#${idx + 1} Visit Date:</strong> <span>${encounterDate}</span><br>
+                        <strong>Type:</strong> <span>${encounterType}</span><br>
+                        <strong>Status:</strong> <span>${encounterStatus}</span>
+                    </div>
+                `;
+            }).join("");
+        }
     }
 
     // Reveal hidden display widgets and slide down the interface frame container
