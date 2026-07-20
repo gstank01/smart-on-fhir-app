@@ -248,8 +248,8 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
     document.getElementById("pt-dob").innerText = patientData.birthDate || "N/A";
     document.getElementById("pt-gender").innerText = patientData.gender || "N/A";
 
-    // Extract entries and locations maps safely from search bundle
-    const entries = fhirBundle.entry || [];
+    // FIX: Changed 'fhirBundle' to 'appointmentData' to prevent ReferenceError crash
+    const entries = appointmentData.entry || [];
     const appointments = entries.filter(e => e.resource?.resourceType === "Appointment").map(e => e.resource);
     const locations = entries.filter(e => e.resource?.resourceType === "Location").map(e => e.resource);
 
@@ -286,28 +286,34 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
         }).join("");
     }
 
+    // Process and display encounter cards safely
     if (encountersListDiv) {
-        const encounterEntries = encounterData.entry || [];
-        const encounters = encounterEntries.filter(e => e.resource?.resourceType === "Encounter").map(e => e.resource);
-
-        if (encounters.length === 0) {
-            encountersListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No recent encounters found.</p>`;
+        // Handle case where our network failsafe returned an error indicator block
+        if (encounterData?.error) {
+            encountersListDiv.innerHTML = `<p style="color:#c00; font-weight:bold; padding:5px;"> Encounters Sync Pending (EHR Simulator Authorization Delay).</p>`;
         } else {
-            encountersListDiv.innerHTML = encounters.map((enc, idx) => {
-                // Extracts the date of the medical visit
-                const encounterDate = enc.period?.start ? new Date(enc.period.start).toLocaleDateString() : "N/A";
-                // Extracts the type/reason (e.g., "Outpatient", "Follow-up")
-                const encounterType = enc.type?.[0]?.text || enc.class?.display || "General Visit";
-                const encounterStatus = enc.status || "N/A";
+            const encounterEntries = encounterData.entry || [];
+            const encounters = encounterEntries.filter(e => e.resource?.resourceType === "Encounter").map(e => e.resource);
 
-                return `
-                    <div class="encounter-list-node" style="border-left: 4px solid #0076d6; padding: 10px; margin-bottom: 10px; background: #f9f9f9;">
-                        <strong>#${idx + 1} Visit Date:</strong> <span>${encounterDate}</span><br>
-                        <strong>Type:</strong> <span>${encounterType}</span><br>
-                        <strong>Status:</strong> <span>${encounterStatus}</span>
-                    </div>
-                `;
-            }).join("");
+            if (encounters.length === 0) {
+                encountersListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No recent encounters found.</p>`;
+            } else {
+                encountersListDiv.innerHTML = encounters.map((enc, idx) => {
+                    // Extracts the date of the medical visit
+                    const encounterDate = enc.period?.start ? new Date(enc.period.start).toLocaleDateString() : "N/A";
+                    // Extracts the type/reason (e.g., "Outpatient", "Follow-up")
+                    const encounterType = enc.type?.[0]?.text || enc.class?.display || "General Visit";
+                    const encounterStatus = enc.status || "N/A";
+
+                    return `
+                        <div class="encounter-list-node" style="border-left: 4px solid #0076d6; padding: 10px; margin-bottom: 10px; background: #f9f9f9;">
+                            <strong>#${idx + 1} Visit Date:</strong> <span>${encounterDate}</span><br>
+                            <strong>Type:</strong> <span>${encounterType}</span><br>
+                            <strong>Status:</strong> <span>${encounterStatus}</span>
+                        </div>
+                    `;
+                }).join("");
+            }
         }
     }
 
@@ -315,6 +321,7 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
     if (statusDiv) statusDiv.style.display = "none";
     if (demographicsView) demographicsView.style.display = "block";
 }
+
 
 // Global DOM Content Hook Deployment Execution Layer
 document.addEventListener("DOMContentLoaded", executeTokenExchange);
