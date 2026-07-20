@@ -1,4 +1,4 @@
-// js/config.js to keep the environmental variables in one place in case we need to switch between environments
+//js/config.js to keep the environmental variables in one place in case we need to switch between environments
 const SMART_CONFIG = {
     CLIENT_ID: "ef3b2af6-c1b8-4421-9dda-108c6ac8afce", //the client ID registered on the Vendor Servises website
     
