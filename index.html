@@ -9,7 +9,48 @@
 </head>
 <body>
 
+<div class="window-box"><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART on FHIR Appointments Dashboard</title>
+    <!-- External CSS link added here -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
 <div class="window-box">
+  <!-- Dynamic status and tracking container -->
+  <div id="status" class="loading">Initializing launch handshake...</div>
+
+  <!-- Updated with clean classes instead of inline styles -->
+  <div id="demographics-view" style="display: none;">
+    
+    <h3>Patient Dashboard</h3>
+    <div class="demographics-banner">
+      <div class="data-item"><strong>Patient Name:</strong> <span id="pt-name"></span></div>
+      <div class="data-item"><strong>Birth Date:</strong> <span id="pt-dob"></span></div>
+      <div class="data-item"><strong>Gender:</strong> <span id="pt-gender"></span></div>
+    </div>
+      
+    <!-- Dedicated container for appointments -->
+    <h4>Scheduled Patient Appointments:</h4>
+    <div id="appointments-list"></div>
+
+    <!-- Dedicated container for medical encounters -->
+    <h4>Recent Medical Encounters:</h4>
+    <div id="encounters-list"></div>
+    
+  </div>
+</div>
+
+    <!-- Scripts organized strictly by execution layer dependencies -->
+    <script src="js/config.js"></script>
+    <script src="js/smart-callback.js"></script>
+</body>
+</html>
+
   <h3>Appointments</h3>
 
   <!-- Dynamic status and tracking container -->
