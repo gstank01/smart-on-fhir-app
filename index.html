@@ -4,70 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMART on FHIR Appointments Dashboard</title>
-    <!-- External CSS link added here -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<div class="window-box"><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMART on FHIR Appointments Dashboard</title>
-    <!-- External CSS link added here -->
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-
-<div class="window-box">
-  <!-- Dynamic status and tracking container -->
-  <div id="status" class="loading">Initializing launch handshake...</div>
-
-  <!-- Updated with clean classes instead of inline styles -->
-  <div id="demographics-view" style="display: none;">
-  <header>  
-        <h3>Chart</h3>
-        <div class="demographics-banner">
-            <div class="data-item"><strong>patient name:</strong> <span id="pt-name"></span></div>
-            <div class="data-item"><strong>birth date:</strong> <span id="pt-dob"></span></div>
-            <div class="data-item"><strong>gender:</strong> <span id="pt-gender"></span></div>
+    <main class="window-box">
+        <!-- Status indicator -->
+        <div id="status" class="loading" role="status" aria-live="polite">
+            Initializing launch handshake...
         </div>
-        <nav class="dashboard-nav">
-            <button class="nav-btn active" onclick="switchTab(event, 'home-section')">Home</button>
-            <button class="nav-btn" onclick="switchTab(event, 'appointments-section')">Appointments</button>
-            <button class="nav-btn" onclick="switchTab(event, 'encounters-section')">Encounters</button>
-        </nav>
- </header>
 
-<!-- Wrappers for your sections -->
-<div class="dashboard-content">
+        <!-- Main content area (hidden until data loads) -->
+        <div id="demographics-view" class="hidden">
+            <header>
+                <h1>Patient Dashboard</h1>
+                <section class="demographics-banner">
+                    <div class="data-item">
+                        <strong>Patient Name:</strong>
+                        <span id="pt-name"></span>
+                    </div>
+                    <div class="data-item">
+                        <strong>Birth Date:</strong>
+                        <span id="pt-dob"></span>
+                    </div>
+                    <div class="data-item">
+                        <strong>Gender:</strong>
+                        <span id="pt-gender"></span>
+                    </div>
+                </section>
 
-    <!-- Home Section (Visible by default) -->
-    <section id="home-section" class="tab-content active">
-        <h4>About this app:</h4>
-        <div id="home">
-            <p>A test app to use with Epic VendorServices simulator when testing Smart-on-FHIR launch</p>
+                <!-- Navigation tabs -->
+                <nav class="dashboard-nav" aria-label="Dashboard sections">
+                    <button class="nav-btn active" data-tab="home-section">
+                        Home
+                    </button>
+                    <button class="nav-btn" data-tab="appointments-section">
+                        Appointments
+                    </button>
+                    <button class="nav-btn" data-tab="encounters-section">
+                        Encounters
+                    </button>
+                </nav>
+            </header>
+
+            <!-- Content sections -->
+            <div class="dashboard-content">
+                <section id="home-section" class="tab-content active" aria-labelledby="home-title">
+                    <h2 id="home-title">About this app</h2>
+                    <p>A test app to use with Epic VendorServices simulator when testing SMART-on-FHIR launch</p>
+                </section>
+
+                <section id="appointments-section" class="tab-content" aria-labelledby="appointments-title">
+                    <h2 id="appointments-title">Appointments</h2>
+                    <div id="appointments-list"></div>
+                </section>
+
+                <section id="encounters-section" class="tab-content" aria-labelledby="encounters-title">
+                    <h2 id="encounters-title">Encounters</h2>
+                    <div id="encounters-list"></div>
+                </section>
+            </div>
         </div>
-    </section>
-    
-    <!-- Appointments Section (Hidden by default) -->
-    <section id="appointments-section" class="tab-content">
-        <h4>Appointments:</h4>
-        <div id="appointments-list"></div>
-    </section>
+    </main>
 
-    <!-- Encounters Section (Hidden by default) -->
-    <section id="encounters-section" class="tab-content">
-        <h4>Encounters:</h4>
-        <div id="encounters-list"></div>
-    </section>
-
-</div>
-
-    <!-- Scripts organized strictly by execution layer dependencies -->
+    <!-- Scripts in dependency order -->
     <script src="js/config.js"></script>
     <script src="js/smart-callback.js"></script>
-    <script src="js/ui-controller.js"></script>  
+    <script src="js/ui-controller.js"></script>
 </body>
 </html>
-
