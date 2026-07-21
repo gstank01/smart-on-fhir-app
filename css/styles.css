@@ -79,13 +79,13 @@ header h3 {
 
 
 .nav-btn:hover {
-    color: #4f46e5;
+    color: #2d7dd2;
 }
 
 
 .nav-btn.active {
-    color: #4f46e5; 
-    border-bottom: 3px solid #4f46e5;
+    color: #2d7dd2; 
+    border-bottom: 3px solid #2d7dd2;
 }
 
 .tab-content {
