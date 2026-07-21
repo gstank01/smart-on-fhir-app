@@ -102,7 +102,7 @@ h4 {
 }
 
 header {
-  background-color: var(--color-white);
+  background-color: var(--color-bg-lighter);
   padding: var(--spacing-lg) var(--spacing-3xl);
   border-bottom: 2px solid var(--color-border-light);
   box-shadow: var(--shadow-sm);
