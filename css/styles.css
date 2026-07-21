@@ -5,7 +5,7 @@ body {
     max-width: 800px; 
     margin: 0 auto; 
     padding: 40px; 
-    background: #cfdee7; 
+    background: #f0f4f8; 
 }
 
 header {
@@ -63,6 +63,9 @@ header h3 {
     display: flex;
     gap: 12px;
     margin-top: 5px;
+    background-color: #005a9c; 
+    padding: 10px 20px;        
+    border-radius: 6px;        
 }
 
 .nav-btn {
@@ -71,7 +74,7 @@ header h3 {
     padding: 10px 16px;
     font-size: 14px;
     font-weight: 600;
-    color: #64748b; /* Neutral gray for inactive tabs */
+    color: #64748b; 
     cursor: pointer;
     border-bottom: 3px solid transparent;
     transition: all 0.2s ease-in-out;
