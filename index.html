@@ -33,8 +33,8 @@
             <div class="data-item"><strong>gender:</strong> <span id="pt-gender"></span></div>
         </div>
         <nav class="dashboard-nav">
-            <button class="nav-btn active" onclick="switchTab('appointments-section')">Appointments</button>
-            <button class="nav-btn" onclick="switchTab('encounters-section')">Medical Encounters</button>
+            <button class="nav-btn active" onclick="switchTab(event, 'appointments-section')">Appointments</button>
+            <button class="nav-btn" onclick="switchTab(event, 'encounters-section')">Medical Encounters</button>
         </nav>
  </header>
 
@@ -58,6 +58,7 @@
     <!-- Scripts organized strictly by execution layer dependencies -->
     <script src="js/config.js"></script>
     <script src="js/smart-callback.js"></script>
+    <script src="js/ui-controller.js"></script>  
 </body>
 </html>
 
