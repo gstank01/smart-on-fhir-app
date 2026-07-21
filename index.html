@@ -27,21 +27,33 @@
   <div id="demographics-view" style="display: none;">
   <header>  
         <h3>Patient Dashboard</h3>
-        <div class="demographics-banner">
-          <div class="data-item"><strong>Patient Name:</strong> <span id="pt-name"></span></div>
-          <div class="data-item"><strong>Birth Date:</strong> <span id="pt-dob"></span></div>
-          <div class="data-item"><strong>Gender:</strong> <span id="pt-gender"></span></div>
-        </div>
-  </header>    
-    <!-- Dedicated container for appointments -->
-    <h4>Scheduled Patient Appointments:</h4>
-    <div id="appointments-list"></div>
+        <nav class="dashboard-nav">
+            <button class="nav-btn active" onclick="switchTab('appointments-section')">Appointments</button>
+            <button class="nav-btn" onclick="switchTab('encounters-section')">Medical Encounters</button>
+        </nav>
 
-    <!-- Dedicated container for medical encounters -->
-    <h4>Recent Medical Encounters:</h4>
-    <div id="encounters-list"></div>
+    <div class="demographics-banner">
+        <div class="data-item"><strong>patient name:</strong> <span id="pt-name"></span></div>
+        <div class="data-item"><strong>birth date:</strong> <span id="pt-dob"></span></div>
+        <div class="data-item"><strong>gender:</strong> <span id="pt-gender"></span></div>
+    </div>
+</header>
+
+<!-- Wrappers for your sections -->
+<div class="dashboard-content">
     
-  </div>
+    <!-- Appointments Section (Visible by default) -->
+    <section id="appointments-section" class="tab-content active">
+        <h4>Appointments:</h4>
+        <div id="appointments-list"></div>
+    </section>
+
+    <!-- Encounters Section (Hidden by default) -->
+    <section id="encounters-section" class="tab-content">
+        <h4>Encounters:</h4>
+        <div id="encounters-list"></div>
+    </section>
+
 </div>
 
     <!-- Scripts organized strictly by execution layer dependencies -->
