@@ -246,19 +246,17 @@ function renderDashboardUI(patientData, appointmentData, encounterData, serviceR
     const encountersListDiv = document.getElementById("encounters-list");
     const serviceRequestsListDiv = document.getElementById("service-requests-list");
     
-    // Process and populate demographic fields safely
+    // 1. Process and populate demographic fields safely
     const nameObj = (patientData.name && patientData.name.length > 0) ? patientData.name[0] : {};
-    
-    // Added fallbacks for given name arrays to protect against script crashes
     const givenNameArray = nameObj.given || [];
     const firstName = givenNameArray.length > 0 ? givenNameArray.join(" ") : "N/A";
     const lastName = nameObj.family || "N/A";
 
-    document.getElementById("pt-name").innerText = `${firstName} ${lastName}`.trim();
-    document.getElementById("pt-dob").innerText = patientData.birthDate || "N/A";
-    document.getElementById("pt-gender").innerText = patientData.gender || "N/A";
+    if (document.getElementById("pt-name")) document.getElementById("pt-name").innerText = `${firstName} ${lastName}`.trim();
+    if (document.getElementById("pt-dob")) document.getElementById("pt-dob").innerText = patientData.birthDate || "N/A";
+    if (document.getElementById("pt-gender")) document.getElementById("pt-gender").innerText = patientData.gender || "N/A";
 
-    // Changed 'fhirBundle' to 'appointmentData' to prevent ReferenceError crash
+    // 2. Process Appointments
     const entries = appointmentData.entry || [];
     const appointments = entries.filter(e => e.resource?.resourceType === "Appointment").map(e => e.resource);
     const locations = entries.filter(e => e.resource?.resourceType === "Location").map(e => e.resource);
@@ -268,38 +266,36 @@ function renderDashboardUI(patientData, appointmentData, encounterData, serviceR
         if (loc.id) locationMap[loc.id] = loc.name || "Unknown Location"; 
     });
 
-    // Output dynamic appointment cards
-    if (appointments.length === 0) {
-        appointmentsListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No upcoming appointments.</p>`;
-    } else {
-        appointmentsListDiv.innerHTML = appointments.map((appt, idx) => {
-            const timeStr = appt.start ? new Date(appt.start).toLocaleString() : "N/A";
-            const currentStatus = appt.status || "N/A";
-            let locationName = "Not Specified";
+    if (appointmentsListDiv) {
+        if (appointments.length === 0) {
+            appointmentsListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No upcoming appointments.</p>`;
+        } else {
+            appointmentsListDiv.innerHTML = appointments.map((appt, idx) => {
+                const timeStr = appt.start ? new Date(appt.start).toLocaleString() : "N/A";
+                const currentStatus = appt.status || "N/A";
+                let locationName = "Not Specified";
 
-            // FIX: Strengthened location extraction query logic
-            const locParticipant = appt.participant?.find(p => p.actor?.reference?.includes("Location/"));
-            const locRef = locParticipant?.actor?.reference;
-            
-            if (locRef) {
-                const locId = locRef.split("Location/").pop().split("/")[0]; // Isolates exact numerical token
-                locationName = locationMap[locId] || "Clinic Facility Target";
-            }
+                const locParticipant = appt.participant?.find(p => p.actor?.reference?.includes("Location/"));
+                const locRef = locParticipant?.actor?.reference;
+                
+                if (locRef) {
+                    const locId = locRef.split("Location/").pop().split("/")[0];
+                    locationName = locationMap[locId] || "Clinic Facility Target";
+                }
 
-            return `
-                <div class="appointment-list-node">
-                    <strong>#${idx + 1} Schedule Time:</strong> <span class="val-time">${timeStr}</span><br>
-                    <strong>Status State:</strong> <span class="val-status">${currentStatus}</span><br>
-                    <strong>Location Context:</strong> <span class="val-location">${locationName}</span>
-                </div>
-            `;
+                return `
+                    <div class="appointment-list-node">
+                        <strong>#${idx + 1} Schedule Time:</strong> <span class="val-time">${timeStr}</span><br>
+                        <strong>Status State:</strong> <span class="val-status">${currentStatus}</span><br>
+                        <strong>Location Context:</strong> <span class="val-location">${locationName}</span>
+                    </div>
+                `;
             }).join("");
         }
     }
 
-    // Process and display encounter cards safely
+    // 3. Process Encounters
     if (encountersListDiv) {
-        // Handle case where our network failsafe returned an error indicator block
         if (encounterData?.error) {
             encountersListDiv.innerHTML = `<p style="color:#c00; font-weight:bold; padding:5px;"> Encounters Sync Pending (EHR Simulator Authorization Delay).</p>`;
         } else {
@@ -310,9 +306,7 @@ function renderDashboardUI(patientData, appointmentData, encounterData, serviceR
                 encountersListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No recent encounters found.</p>`;
             } else {
                 encountersListDiv.innerHTML = encounters.map((enc, idx) => {
-                    // Extracts the date of the medical visit
                     const encounterDate = enc.period?.start ? new Date(enc.period.start).toLocaleDateString() : "N/A";
-                    // Extracts the type/reason (e.g., "Outpatient", "Follow-up")
                     const encounterType = enc.type?.[0]?.text || enc.class?.display || "General Visit";
                     const encounterStatus = enc.status || "N/A";
 
@@ -324,12 +318,13 @@ function renderDashboardUI(patientData, appointmentData, encounterData, serviceR
                         </div>
                     `;
                 }).join("");
-             }
+            }
         } 
     }   
-    // Process and display ServiceRequest cards 
+
+    // 4. Process Service Requests
     if (serviceRequestsListDiv) {
-        const serviceRequestEntries = serviceRequestData.entry || [];
+        const serviceRequestEntries = (serviceRequestData && serviceRequestData.entry) || [];
         const serviceRequests = serviceRequestEntries.filter(e => e.resource?.resourceType === "ServiceRequest").map(e => e.resource);
 
         if (serviceRequests.length === 0) {
@@ -350,13 +345,12 @@ function renderDashboardUI(patientData, appointmentData, encounterData, serviceR
             }).join("");
         }
     }      
-       
 
-    // Reveal hidden display widgets and slide down the interface frame container
+    // 5. Interface UI state toggles
     if (statusDiv) statusDiv.style.display = "none";
     if (demographicsView) demographicsView.style.display = "block";
 }
 
-
 // Global DOM Content Hook Deployment Execution Layer
 document.addEventListener("DOMContentLoaded", executeTokenExchange);
+
