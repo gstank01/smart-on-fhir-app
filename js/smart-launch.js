@@ -82,7 +82,7 @@ function handleLaunchPhase(fhirServerUrl, launchToken) { //pass the fhir server 
     // 3. Render the preview UI dashboard panel using clean CSS classes
     document.getElementById("status").innerHTML = `
         <h4 class="preview-title">Raw HTTP POST Request Preview:</h4>
-        <p class="preview-desc">The purpos of this screen is to review the POST request payload that we have constructed and validate that all paramenters areavailable before we can send it to Epic :</p>
+        <p class="preview-desc">The purpose of this screen is to review the POST request payload that we have constructed and validate that all paramenters are available before we can send it to Epic :</p>
         <textarea readonly class="raw-http-box">${rawHttpText}</textarea>
         <p class="success-note">Form parameters compiled and URL-encoded successfully.</p>
         <button id="submit-to-epic-btn" class="epic-submit-btn">Send HTTP POST to Epic Authorization Server →</button>
