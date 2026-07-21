@@ -239,7 +239,7 @@ function renderIntermediateFhirCard(statusDiv, fhirServerUrl, patientId, accessT
     bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken);
 }
 
-function renderDashboardUI(patientData, appointmentData, encounterData) {
+function renderDashboardUI(patientData, appointmentData, encounterData, serviceRequestData) {
     const statusDiv = document.getElementById("status");
     const demographicsView = document.getElementById("demographics-view");
     const appointmentsListDiv = document.getElementById("appointments-list");
@@ -293,7 +293,8 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
                     <strong>Location Context:</strong> <span class="val-location">${locationName}</span>
                 </div>
             `;
-        }).join("");
+            }).join("");
+        }
     }
 
     // Process and display encounter cards safely
