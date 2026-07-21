@@ -33,15 +33,22 @@
             <div class="data-item"><strong>gender:</strong> <span id="pt-gender"></span></div>
         </div>
         <nav class="dashboard-nav">
+            <button class="nav-btn" onclick="switchTab(event, 'home-section')">Home</button>
             <button class="nav-btn active" onclick="switchTab(event, 'appointments-section')">Appointments</button>
-            <button class="nav-btn" onclick="switchTab(event, 'encounters-section')">Medical Encounters</button>
+            <button class="nav-btn" onclick="switchTab(event, 'encounters-section')">Encounters</button>
         </nav>
  </header>
 
 <!-- Wrappers for your sections -->
 <div class="dashboard-content">
+
+    <!-- Home Section (Visible by default) -->
+    <section id="home-section" class="tab-content active">
+        <h4>Appointments:</h4>
+        <div id="appointments-list"></div>
+    </section>
     
-    <!-- Appointments Section (Visible by default) -->
+    <!-- Appointments Section (Hidden by default) -->
     <section id="appointments-section" class="tab-content active">
         <h4>Appointments:</h4>
         <div id="appointments-list"></div>
