@@ -48,7 +48,6 @@ header h3 {
 .data-item strong {
     color: #2d3748;
     font-weight: 600;
-    text-transform: capitalize !important;
 }
 
 .data-item span {
