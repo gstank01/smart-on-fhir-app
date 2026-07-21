@@ -1,19 +1,30 @@
-//this is the place we place the functions that will control the UI behaviour of the patient data display page. Keeping it separate from the launch and callback code.
+// Replace inline onclick handlers with event delegation
+document.addEventListener('DOMContentLoaded', () => {
+    const navButtons = document.querySelectorAll('.nav-btn');
+    
+    navButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            switchTab(e, button.dataset.tab);
+        });
+    });
+});
 
 function switchTab(event, sectionId) {
-    // 1. Hide all sections by removing the active class
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
+    event.preventDefault();
+    
+    // Hide all sections
+    document.querySelectorAll('.tab-content').forEach(section => {
+        section.classList.remove('active');
     });
     
-    // 2. Remove the active color style from all buttons
+    // Deactivate all buttons
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
-    // 3. Reveal the specific clicked section
+    // Show selected section
     document.getElementById(sectionId).classList.add('active');
     
-    // 4. Style the clicked button as active (using the passed event)
-    event.currentTarget.classList.add('active');
+    // Activate clicked button
+    event.target.classList.add('active');
 }
