@@ -324,7 +324,8 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
                     `;
                 }).join("");
              }
-        }   
+        } 
+    }   
     // Process and display ServiceRequest cards 
     if (serviceRequestsListDiv) {
         const serviceRequestEntries = serviceRequestData.entry || [];
