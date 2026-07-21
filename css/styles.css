@@ -38,7 +38,7 @@ header h3 {
 }
 
 .data-item {
-    font-size: 15px;
+    font-size: 20px;
     color: #4a5568;
     display: flex;
     align-items: center;
@@ -48,7 +48,7 @@ header h3 {
 .data-item strong {
     color: #2d3748;
     font-weight: 600;
-    text-transform: capitalize;
+    text-transform: capitalize!important;
 }
 
 .data-item span {
