@@ -59,9 +59,7 @@
   --max-width-content: 800px;
 }
 
-/* ========================================
-   RESET & BASE STYLES
-   ======================================== */
+/* RESET & BASE STYLES  */
 
 * {
   box-sizing: border-box;
@@ -82,9 +80,7 @@ body > * {
   margin-right: auto;
 }
 
-/* ========================================
-   TYPOGRAPHY
-   ======================================== */
+/* TYPOGRAPHY */
 
 h3 {
   margin: 0;
@@ -99,9 +95,11 @@ h4 {
   margin: var(--spacing-lg) 0 var(--spacing-md) 0;
 }
 
-/* ========================================
-   HEADER & NAVIGATION
-   ======================================== */
+/* HEADER & NAVIGATION */
+
+.hidden {
+    display: none;
+}
 
 header {
   background-color: var(--color-white);
@@ -118,9 +116,7 @@ header h3 {
   letter-spacing: 0.5px;
 }
 
-/* ========================================
-   DEMOGRAPHICS
-   ======================================== */
+/*  DEMOGRAPHICS */
 
 .demographics-banner {
   display: flex;
@@ -154,9 +150,7 @@ header h3 {
   }
 }
 
-/* ========================================
-   DASHBOARD NAVIGATION
-   ======================================== */
+/* DASHBOARD NAVIGATION */
 
 .dashboard-nav {
   display: flex;
@@ -193,9 +187,7 @@ header h3 {
   border-bottom-color: var(--color-primary-light);
 }
 
-/* ========================================
-   TAB CONTENT
-   ======================================== */
+/* TAB CONTENT */
 
 .tab-content {
   display: none;
@@ -210,9 +202,7 @@ header h3 {
   color: var(--color-text-dark);
 }
 
-/* ========================================
-   CARDS & CONTAINERS
-   ======================================== */
+/* CARDS & CONTAINERS */
 
 .window-box,
 .inspection-card,
@@ -261,9 +251,7 @@ header h3 {
   margin-top: 0;
 }
 
-/* ========================================
-   APPOINTMENTS
-   ======================================== */
+/* APPOINTMENTS */
 
 .appointment-card,
 .appointment-list-node {
@@ -287,9 +275,7 @@ header h3 {
   color: #7f8c8d;
 }
 
-/* ========================================
-   FORM ELEMENTS
-   ======================================== */
+/* FORM ELEMENTS */
 
 .proceed-btn,
 .epic-submit-btn,
@@ -362,9 +348,7 @@ header h3 {
   outline-offset: 2px;
 }
 
-/* ========================================
-   TEXT AREAS & CODE BLOCKS
-   ======================================== */
+/* TEXT AREAS & CODE BLOCKS */
 
 .raw-http-box,
 .token-textarea {
@@ -401,9 +385,7 @@ header h3 {
   border: 1px solid #ccc;
 }
 
-/* ========================================
-   SCROLL BOXES & CODE DISPLAY
-   ======================================== */
+/* SCROLL BOXES & CODE DISPLAY */
 
 .inspect-scroll-box,
 .token-scroll-box,
@@ -450,9 +432,7 @@ header h3 {
   color: #2980b9;
 }
 
-/* ========================================
-   LABELS & DESCRIPTIONS
-   ======================================== */
+/* LABELS & DESCRIPTIONS */
 
 .inspect-label,
 .token-label,
@@ -476,9 +456,7 @@ header h3 {
   margin-bottom: var(--spacing-md);
 }
 
-/* ========================================
-   STATUS & MESSAGE STATES
-   ======================================== */
+/* STATUS & MESSAGE STATES */
 
 .loading {
   color: #666;
@@ -507,18 +485,14 @@ header h3 {
   text-align: left;
 }
 
-/* ========================================
-   PREVIEW & DISPLAY
-   ======================================== */
+/*  PREVIEW & DISPLAY */
 
 .preview-title {
   color: var(--color-primary);
   margin-bottom: var(--spacing-md);
 }
 
-/* ========================================
-   VALUE COLORS
-   ======================================== */
+/* VALUE COLORS */
 
 .val-time {
   color: #2c3e50;
