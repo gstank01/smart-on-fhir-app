@@ -68,6 +68,7 @@ function generateFhirHttpPreview(patientId, accessToken) {
     let rawText = `GET /Patient/${patientId} HTTP/1.1\n`;
     rawText += `GET /Appointment?patient=${patientId}&service-category=Appointment&_include=Appointment:location HTTP/1.1\n`;
     rawText += `GET /Encounter?patient=${patientId}&_count=10 HTTP/1.1\n`;
+    rawText += `GET /ServiceRequest?patient=${patientId} HTTP/1.1\n`;
     
     // Dynamically parse the active host name, or default it to vendorservices to preserve environment matching
     const hostTarget = sessionStorage.getItem("fhirServerUrl") 
@@ -135,12 +136,13 @@ function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
 function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
     document.getElementById("execute-fhir-btn").addEventListener("click", async function () {
         this.disabled = true;
-        this.innerText = "Querying Patient Profile, Appointments, and Encounters...";
+        this.innerText = "Querying Patient Profile, Appointments, Encounters, and ServiceRequests...";
         const statusDiv = document.getElementById("status");
 
         const targetPatientUrl = `${fhirServerUrl}/Patient/${patientId}`;
         const targetAppointmentUrl = `${fhirServerUrl}/Appointment?patient=${patientId}&_include=Appointment%3Alocation`;
-        const targetEncounterUrl = `${fhirServerUrl}/Encounter?patient=${patientId}&_count=10`;
+        const targetEncounterUrl = `${fhirServerUrl}/Encounter?patient=${patientId}`;
+        const targetServiceRequestUrl = `${fhirServerUrl}/ServiceRequest?patient=${patientId}`;
 
         const headers = { 
             "Authorization": `Bearer ${accessToken}`, 
@@ -149,7 +151,7 @@ function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
 
         try {
             // 1. Execute requests simultaneously, but handle individual errors immediately
-            const [patientData, appointmentData, encounterData] = await Promise.all([
+            const [patientData, appointmentData, encounterData, serviceRequestData] = await Promise.all([
                 
                 // Patient Request Failsafe
                 fetch(targetPatientUrl, { headers })
@@ -173,6 +175,13 @@ function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
                     .catch(err => {
                         console.warn("Failsafe Triggered: Encounter data unavailable (possible sync delay).", err);
                         return { resourceType: "Bundle", entry: [], error: true }; // Flag the error
+                    }),
+                // ServiceRequest Request Failsafe - ADD THIS BLOCK
+                fetch(targetServiceRequestUrl, { headers })
+                    .then(res => res.ok ? res.json() : Promise.reject(`HTTP ${res.status}`))
+                    .catch(err => {
+                        console.warn("Failsafe Triggered: ServiceRequest data unavailable.", err);
+                        return { resourceType: "Bundle", entry: [] };
                     })
             ]);
 
@@ -235,11 +244,12 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
     const demographicsView = document.getElementById("demographics-view");
     const appointmentsListDiv = document.getElementById("appointments-list");
     const encountersListDiv = document.getElementById("encounters-list");
+    const serviceRequestsListDiv = document.getElementById("service-requests-list")
     
     // Process and populate demographic fields safely
     const nameObj = (patientData.name && patientData.name.length > 0) ? patientData.name[0] : {};
     
-    // FIX: Added fallbacks for given name arrays to protect against script crashes
+    // Added fallbacks for given name arrays to protect against script crashes
     const givenNameArray = nameObj.given || [];
     const firstName = givenNameArray.length > 0 ? givenNameArray.join(" ") : "N/A";
     const lastName = nameObj.family || "N/A";
@@ -248,7 +258,7 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
     document.getElementById("pt-dob").innerText = patientData.birthDate || "N/A";
     document.getElementById("pt-gender").innerText = patientData.gender || "N/A";
 
-    // FIX: Changed 'fhirBundle' to 'appointmentData' to prevent ReferenceError crash
+    // Changed 'fhirBundle' to 'appointmentData' to prevent ReferenceError crash
     const entries = appointmentData.entry || [];
     const appointments = entries.filter(e => e.resource?.resourceType === "Appointment").map(e => e.resource);
     const locations = entries.filter(e => e.resource?.resourceType === "Location").map(e => e.resource);
@@ -313,9 +323,31 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
                         </div>
                     `;
                 }).join("");
-            }
+             }
+    // Process and display ServiceRequest cards 
+    if (serviceRequestsListDiv) {
+        const serviceRequestEntries = serviceRequestData.entry || [];
+        const serviceRequests = serviceRequestEntries.filter(e => e.resource?.resourceType === "ServiceRequest").map(e => e.resource);
+
+        if (serviceRequests.length === 0) {
+            serviceRequestsListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No service requests found.</p>`;
+        } else {
+            serviceRequestsListDiv.innerHTML = serviceRequests.map((sr, idx) => {
+                const srStatus = sr.status || "N/A";
+                const srCode = sr.code?.text || sr.code?.coding?.[0]?.display || "N/A";
+                const srAuthoredDate = sr.authoredOn ? new Date(sr.authoredOn).toLocaleDateString() : "N/A";
+
+                return `
+                    <div class="service-request-list-node" style="border-left: 4px solid #ff6b6b; padding: 10px; margin-bottom: 10px; background: #f9f9f9;">
+                        <strong>#${idx + 1} Service Type:</strong> <span>${srCode}</span><br>
+                        <strong>Status:</strong> <span>${srStatus}</span><br>
+                        <strong>Requested Date:</strong> <span>${srAuthoredDate}</span>
+                    </div>
+                `;
+            }).join("");
         }
-    }
+    }      
+       
 
     // Reveal hidden display widgets and slide down the interface frame container
     if (statusDiv) statusDiv.style.display = "none";
