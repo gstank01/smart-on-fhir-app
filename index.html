@@ -27,17 +27,16 @@
   <div id="demographics-view" style="display: none;">
   <header>  
         <h3>Patient Dashboard</h3>
+        <div class="demographics-banner">
+            <div class="data-item"><strong>patient name:</strong> <span id="pt-name"></span></div>
+            <div class="data-item"><strong>birth date:</strong> <span id="pt-dob"></span></div>
+            <div class="data-item"><strong>gender:</strong> <span id="pt-gender"></span></div>
+        </div>
         <nav class="dashboard-nav">
             <button class="nav-btn active" onclick="switchTab('appointments-section')">Appointments</button>
             <button class="nav-btn" onclick="switchTab('encounters-section')">Medical Encounters</button>
         </nav>
-
-    <div class="demographics-banner">
-        <div class="data-item"><strong>patient name:</strong> <span id="pt-name"></span></div>
-        <div class="data-item"><strong>birth date:</strong> <span id="pt-dob"></span></div>
-        <div class="data-item"><strong>gender:</strong> <span id="pt-gender"></span></div>
-    </div>
-</header>
+ </header>
 
 <!-- Wrappers for your sections -->
 <div class="dashboard-content">
