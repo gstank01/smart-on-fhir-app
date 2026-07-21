@@ -244,7 +244,7 @@ function renderDashboardUI(patientData, appointmentData, encounterData) {
     const demographicsView = document.getElementById("demographics-view");
     const appointmentsListDiv = document.getElementById("appointments-list");
     const encountersListDiv = document.getElementById("encounters-list");
-    const serviceRequestsListDiv = document.getElementById("service-requests-list")
+    const serviceRequestsListDiv = document.getElementById("service-requests-list");
     
     // Process and populate demographic fields safely
     const nameObj = (patientData.name && patientData.name.length > 0) ? patientData.name[0] : {};
