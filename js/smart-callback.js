@@ -151,7 +151,7 @@ function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
 
         try {
             // 1. Execute requests simultaneously, but handle individual errors immediately
-            const [patientData, appointmentData, encounterData, serviceRequestData] = await Promise.all([
+            const [patientData, appointmentData, encounterData, serviceRequestData, serviceRequestData] = await Promise.all([
                 
                 // Patient Request Failsafe
                 fetch(targetPatientUrl, { headers })
