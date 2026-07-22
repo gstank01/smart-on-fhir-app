@@ -324,7 +324,7 @@ function renderDashboardUI(patientData, appointmentData, encounterData, serviceR
 
     // 4. Process Service Requests
     if (serviceRequestsListDiv) {
-        if (ServiceRequestData?.error) {
+        if (serviceRequestData?.error) {
             encountersListDiv.innerHTML = `<p style="color:#c00; font-weight:bold; padding:5px;"> Encounters Sync Pending (EHR Simulator Authorization Delay).</p>`;
         } else {
             const serviceRequestEntries = (serviceRequestData && serviceRequestData.entry) || [];
