@@ -137,7 +137,7 @@ function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
 function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
     document.getElementById("execute-fhir-btn").addEventListener("click", async function () {
         this.disabled = true;
-        this.innerText = "Querying Patient Profile, Appointments, Encounters, and ServiceRequests...";
+        this.innerText = "Querying Patient, Appointments, Encounters, and ServiceRequests...";
         const statusDiv = document.getElementById("status");
 
         const targetPatientUrl = `${fhirServerUrl}/Patient/${patientId}`;
@@ -192,7 +192,7 @@ function bindFhirExecutionEvent(fhirServerUrl, patientId, accessToken) {
             }
 
             // 3. Render the UI (The downstream render function will now receive safe fallback objects)
-            renderDashboardUI(patientData, appointmentData, encounterData);
+            renderDashboardUI(patientData, appointmentData, encounterData, serviceRequestData);
 
         } catch (error) {
             this.disabled = false;
