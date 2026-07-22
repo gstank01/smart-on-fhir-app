@@ -84,7 +84,7 @@ function generateFhirHttpPreview(patientId, accessToken) {
 // 3. Data transfer - API fetch
 
 function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
-    //set event listener to exchange the code  for access token
+    //set event listener to exchange the code  for access token on clicking the button 
     document.getElementById("redeem-token-btn").addEventListener("click", async function () {
         this.disabled = true;
         this.innerText = "Exchanging code payload for Epic Access Token...";
@@ -92,6 +92,7 @@ function bindTokenRedemptionEvent(statusDiv, tokenPayload, fhirServerUrl) {
         // Safety pointer resolution mapping step
         const config = typeof SMART_CONFIG !== "undefined" ? SMART_CONFIG : window.SMART_CONFIG;
 
+        //execute the tocken redemption process
         try {
             const response = await fetch(config.ENDPOINTS.EPIC_TOKEN, {
                 method: "POST",
