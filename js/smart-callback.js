@@ -324,26 +324,30 @@ function renderDashboardUI(patientData, appointmentData, encounterData, serviceR
 
     // 4. Process Service Requests
     if (serviceRequestsListDiv) {
-        const serviceRequestEntries = (serviceRequestData && serviceRequestData.entry) || [];
-        const serviceRequests = serviceRequestEntries.filter(e => e.resource?.resourceType === "ServiceRequest").map(e => e.resource);
-
-        if (serviceRequests.length === 0) {
-            serviceRequestsListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No service requests found.</p>`;
+        if (ServiceRequestData?.error) {
+            encountersListDiv.innerHTML = `<p style="color:#c00; font-weight:bold; padding:5px;"> Encounters Sync Pending (EHR Simulator Authorization Delay).</p>`;
         } else {
-            serviceRequestsListDiv.innerHTML = serviceRequests.map((sr, idx) => {
-                const srStatus = sr.status || "N/A";
-                const srCode = sr.code?.text || sr.code?.coding?.[0]?.display || "N/A";
-                const srAuthoredDate = sr.authoredOn ? new Date(sr.authoredOn).toLocaleDateString() : "N/A";
+            const serviceRequestEntries = (serviceRequestData && serviceRequestData.entry) || [];
+            const serviceRequests = serviceRequestEntries.filter(e => e.resource?.resourceType === "ServiceRequest").map(e => e.resource);
 
-                return `
-                    <div class="service-request-list-node" style="border-left: 4px solid #ff6b6b; padding: 10px; margin-bottom: 10px; background: #f9f9f9;">
-                        <strong>#${idx + 1} Service Type:</strong> <span>${srCode}</span><br>
-                        <strong>Status:</strong> <span>${srStatus}</span><br>
-                        <strong>Requested Date:</strong> <span>${srAuthoredDate}</span>
-                    </div>
-                `;
-            }).join("");
-        }
+            if (serviceRequests.length === 0) {
+                serviceRequestsListDiv.innerHTML = `<p style="color:#666; font-style:italic; padding:5px;">No service requests found.</p>`;
+            } else {
+                serviceRequestsListDiv.innerHTML = serviceRequests.map((sr, idx) => {
+                    const srStatus = sr.status || "N/A";
+                    const srCode = sr.code?.text || sr.code?.coding?.[0]?.display || "N/A";
+                    const srAuthoredDate = sr.authoredOn ? new Date(sr.authoredOn).toLocaleDateString() : "N/A";
+
+                    return `
+                        <div class="service-request-list-node" style="border-left: 4px solid #ff6b6b; padding: 10px; margin-bottom: 10px; background: #f9f9f9;">
+                            <strong>#${idx + 1} Service Type:</strong> <span>${srCode}</span><br>
+                            <strong>Status:</strong> <span>${srStatus}</span><br>
+                            <strong>Requested Date:</strong> <span>${srAuthoredDate}</span>
+                        </div>
+                    `;
+                }).join("");
+            }
+        }        
     }      
 
     // 5. Interface UI state toggles
